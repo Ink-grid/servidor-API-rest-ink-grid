@@ -53,66 +53,69 @@ module.exports = {
 
 				// refinando
 				for (let element of lisProduct) {
-					if (
-						element.saldo.cantidad >= newcantidad &&
-						element.saldo.cantidad !== 0
-					) {
-						const data = {
-							fecha: fecha,
-							descripcion: `${descripcion} (${element.descripcion})`,
-							valor_uni: element.valor_uni,
-							salidas: {
-								cantidad: parseInt(newcantidad),
-								valor: element.valor_uni * parseInt(newcantidad)
-							},
-							operacion: 'salida',
-							saldo: {
-								cantidad: element.saldo.cantidad - parseInt(newcantidad),
-								valor:
-									element.valor_uni *
-									(element.saldo.cantidad - parseInt(newcantidad))
-							}
-						};
-						ListNewProduct.push(data);
-						lisProduct.forEach((element, index) => {
-							if (index !== 0) {
-								ListNewProduct.push(element);
-							}
-						});
-
-						await ventaModel.addVentas(cod_producto, data);
-						res.json({
-							status: true,
-							message: 'Venta add'
-						});
-						break;
+					if (element.saldo.cantidad === 0) {
+						ListNewProduct.push(element);
 					} else {
-						let diferencia = element.saldo.cantidad - parseInt(newcantidad);
-						var convertPosit = Math.abs(diferencia);
-						let newnumberCantidad = parseInt(newcantidad) - convertPosit;
-						const datas = {
-							fecha: fecha,
-							descripcion: `${descripcion} (${element.descripcion})`,
-							valor_uni: element.valor_uni,
-							salidas: {
-								cantidad: parseInt(newnumberCantidad),
-								valor: element.valor_uni * parseInt(newnumberCantidad)
-							},
-							operacion: 'salida',
-							saldo: {
-								cantidad: element.saldo.cantidad - parseInt(newnumberCantidad),
-								valor:
-									element.valor_uni *
-									(element.saldo.cantidad - parseInt(newnumberCantidad))
-							}
-						};
-						ListNewProduct.push(datas);
-						await ventaModel.addVentas(cod_producto, datas);
+						if (
+							element.saldo.cantidad >= newcantidad &&
+							element.saldo.cantidad !== 0
+						) {
+							const data = {
+								fecha: fecha,
+								descripcion: `${descripcion} (${element.descripcion})`,
+								valor_uni: element.valor_uni,
+								salidas: {
+									cantidad: parseInt(newcantidad),
+									valor: element.valor_uni * parseInt(newcantidad)
+								},
+								operacion: 'salida',
+								saldo: {
+									cantidad: element.saldo.cantidad - parseInt(newcantidad),
+									valor:
+										element.valor_uni *
+										(element.saldo.cantidad - parseInt(newcantidad))
+								}
+							};
+							ListNewProduct.push(data);
+							lisProduct.forEach((element, index) => {
+								if (index + 1 > ListNewProduct.length) {
+									ListNewProduct.push(element);
+								}
+							});
 
-						// res.json({ diferencia: newnumberCantidad });
+							await ventaModel.addVentas(cod_producto, data);
+							res.json({
+								status: true,
+								message: 'Venta add'
+							});
+							break;
+						} else {
+							let diferencia = element.saldo.cantidad - parseInt(newcantidad);
+							var convertPosit = Math.abs(diferencia);
+							let newnumberCantidad = parseInt(newcantidad) - convertPosit;
+							const datas = {
+								fecha: fecha,
+								descripcion: `${descripcion} (${element.descripcion})`,
+								valor_uni: element.valor_uni,
+								salidas: {
+									cantidad: parseInt(newnumberCantidad),
+									valor: element.valor_uni * parseInt(newnumberCantidad)
+								},
+								operacion: 'salida',
+								saldo: {
+									cantidad:
+										element.saldo.cantidad - parseInt(newnumberCantidad),
+									valor:
+										element.valor_uni *
+										(element.saldo.cantidad - parseInt(newnumberCantidad))
+								}
+							};
+							ListNewProduct.push(datas);
+							await ventaModel.addVentas(cod_producto, datas);
+							newcantidad = convertPosit;
+							// res.json({ diferencia: newnumberCantidad });
+						}
 					}
-
-					newcantidad = convertPosit;
 				}
 
 				ListNewProduct.forEach(async element => {

@@ -42,37 +42,59 @@ module.exports = {
 			}
 		};
 
+		const ActualizarEntra = await compraModel.getHistoriKardex(cod_producto);
+
 		await compraModel.addCompras(cod_producto, data);
 
-		const ActualizarEntra = await compraModel.getHistoriKardex(cod_producto);
 		if (ActualizarEntra.val() !== null) {
-			let dat = Object.values(ActualizarEntra.val());
-			dat.forEach(async (Element, index) => {
-				let listProduct = {
-					descripcion: `(producto N° ${index} (${Element.descripcion}))`,
-					valor_uni: Element.valor_uni,
-					saldo: {
-						cantidad: Element.saldo.cantidad,
-						valor: Element.saldo.valor
-					},
-					operacion: 'product_list'
-				};
-				await compraModel.addCompras(cod_producto, listProduct);
+			const arrayEntrada = Object.values(ActualizarEntra.val());
+			const newListProduct = await compraModel.getListProduct(
+				cod_producto,
+				arrayEntrada.length
+			);
+			const arraynewList = Object.values(newListProduct.val());
+			const newdatelisproducto = await compraModel.getHistoriKardex(
+				cod_producto
+			);
+			const arraylisproducto = Object.values(newdatelisproducto.val());
+			arraynewList.push(arraylisproducto[arraylisproducto.length - 1]);
+			arraynewList.forEach(async (Element, index) => {
+				if (index + 1 === arraynewList.length) {
+					const newdat = {
+						descripcion: `(producto N° ${index} (${Element.descripcion}))`,
+						operacion: 'product_list',
+						saldo: {
+							cantidad: Element.saldo.cantidad,
+							valor: Element.saldo.valor
+						},
+						valor_uni: Element.valor_uni
+					};
+					await compraModel.addCompras(cod_producto, newdat);
+				} else {
+					await compraModel.addCompras(cod_producto, Element);
+				}
 			});
+			res.json({
+				status: true,
+				message: 'Compras Added'
+			});
+			return;
 		}
 
-		// res.json({ data: dat });
-		// codigo para actualizar cualquier estado de la base de datos
-		// const resp = await compraModel.getproductbyID(cod_producto);
-		// if (resp.val() !== null) {
-		// 	let id = Object.keys(resp.val());
-		// 	const data = {
-		// 		registro: false
-		// 	};
-		// 	id.forEach(async eleme => {
-		// 		await compraModel.updateProducto(eleme, data);
-		// 	});
-		// }
-		res.json({ status: true, message: 'Compras Added' });
+		const datanew = {
+			descripcion: `producto N° 0 ${descripcion}`,
+			valor_uni: parseInt(valor_uni),
+			operacion: 'product_list',
+			saldo: {
+				cantidad: parseInt(cantidad),
+				valor: valor_uni * cantidad
+			}
+		};
+
+		await compraModel.addCompras(cod_producto, datanew);
+		res.json({
+			status: true,
+			message: 'Compras Added'
+		});
 	}
 };
