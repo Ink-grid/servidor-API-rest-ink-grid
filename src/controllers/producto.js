@@ -89,5 +89,18 @@ module.exports = {
 
 		await productoModel.addProductos(data);
 		res.json({ status: true, message: 'Product Added' });
+	},
+
+	async getStatusProduct(req, res) {
+		if (!has(req.params, 'cod_produc'))
+			throw { code: status.BAD_REQUEST, message: 'You must specify the id' };
+
+		let { id } = req.params;
+
+		let data = await userModel.findOne({ where: { id } });
+
+		if (!data) throw { code: status.BAD_REQUEST, message: 'User not found' };
+
+		res.json({ status: true, message: 'Returning user', data });
 	}
 };

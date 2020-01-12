@@ -13,8 +13,20 @@ const Productos = {
 	async addProductos(data) {
 		return await database.ref('NevadoStore/Producto').push(data);
 	},
-	async addKardex(data) {
-		return await database.ref('NevadoStore/kardex').push(data);
+	async getProductbyId(cod, cant) {
+		return await database
+			.ref(`NevadoStore/kardex/${cod}`)
+			.orderByChild('operacion')
+			.equalTo('product_list')
+			.limitToLast(cant)
+			.once('value');
+	},
+	async getListEntradas(cod) {
+		return await database
+			.ref(`NevadoStore/kardex/${cod}`)
+			.orderByChild('operacion')
+			.equalTo('entrada')
+			.once('value');
 	}
 };
 
