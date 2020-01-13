@@ -83,6 +83,8 @@ module.exports = {
 			min: min,
 			max: max,
 			lote: lote,
+			stock: 0,
+			precio_uni: 0,
 			registro: false,
 			tipo_producto: tipo_producto
 		};
@@ -145,6 +147,18 @@ module.exports = {
 			});
 		} else {
 			res.json({ status: false, message: 'No product list' });
+		}
+	},
+
+	async getProductEntradas(req, res) {
+		let dataProduct = await productoModel.getProductoEntra();
+		if (dataProduct.val() !== null) {
+			const parseDataProducto = Object.values(dataProduct.val());
+			res.json({
+				status: true,
+				message: 'product list',
+				data: parseDataProducto
+			});
 		}
 	}
 };

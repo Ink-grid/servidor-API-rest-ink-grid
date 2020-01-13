@@ -74,6 +74,34 @@ module.exports = {
 					await compraModel.addCompras(cod_producto, Element);
 				}
 			});
+
+			const listProductoKardex = await compraModel.getHistoriKardex(
+				cod_producto
+			);
+			if (listProductoKardex.val() !== null) {
+				let cantList = Object.values(listProductoKardex.val());
+				const resultList = await compraModel.getListProduct(
+					cod_producto,
+					cantList.length
+				);
+				if (resultList.val() !== null) {
+					const listArray = Object.values(resultList.val());
+					let stock = 0;
+					listArray.map(Element => {
+						stock += Element.saldo.cantidad;
+					});
+					const idproducto = await compraModel.getproductbyID(cod_producto);
+					if (idproducto.val() !== null) {
+						const key = Object.keys(idproducto.val());
+						const dataUpdate = {
+							stock: stock,
+							registro: true,
+							precio_uni: parseInt(valor_uni)
+						};
+						await compraModel.updateProducto(key, dataUpdate);
+					}
+				}
+			}
 			res.json({
 				status: true,
 				message: 'Compras Added'

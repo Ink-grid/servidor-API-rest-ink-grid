@@ -10,6 +10,13 @@ const Productos = {
 			.equalTo(false)
 			.once('value');
 	},
+	async getProductoEntra() {
+		return await database
+			.ref('NevadoStore/Producto')
+			.orderByChild('registro')
+			.equalTo(true)
+			.once('value');
+	},
 	async addProductos(data) {
 		return await database.ref('NevadoStore/Producto').push(data);
 	},
