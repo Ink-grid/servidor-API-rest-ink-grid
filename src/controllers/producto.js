@@ -92,15 +92,34 @@ module.exports = {
 	},
 
 	async getStatusProduct(req, res) {
-		if (!has(req.params, 'cod_produc'))
-			throw { code: status.BAD_REQUEST, message: 'You must specify the id' };
+		if (!has(req.params, 'cod_produc')) {
+			res.json({ status: false, message: 'You must specify the cod_product' });
+			return;
+		}
 
-		let { id } = req.params;
+		let { cod_produc } = req.params;
 
-		let data = await userModel.findOne({ where: { id } });
-
-		if (!data) throw { code: status.BAD_REQUEST, message: 'User not found' };
-
-		res.json({ status: true, message: 'Returning user', data });
+		let listEntradas = await productoModel.getListEntradas(cod_produc);
+		if (listEntradas.val() !== null) {
+			let cantList = Object.values(listEntradas.val());
+			let statusProduct = await productoModel.getProductbyId(
+				cod_produc,
+				cantList.length
+			);
+			if (statusProduct.val() !== null) {
+				let arraystatuslist = Object.values(statusProduct.val());
+				let cantidad = 0;
+				arraystatuslist.map(Element => {
+					cantidad += Element.saldo.cantidad;
+				});
+				res.json({
+					status: true,
+					message: 'se obtuvo con exito el estado',
+					cantidad: cantidad
+				});
+			}
+		} else {
+			res.json({ status: true, message: 'no hay registro de compra', data: 0 });
+		}
 	}
 };
