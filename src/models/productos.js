@@ -27,6 +27,9 @@ const Productos = {
 			.orderByChild('operacion')
 			.equalTo('entrada')
 			.once('value');
+	},
+	async getHistorial(cod) {
+		return await database.ref(`NevadoStore/kardex/${cod}`).once('value');
 	}
 };
 

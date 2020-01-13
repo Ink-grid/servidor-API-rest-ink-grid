@@ -119,7 +119,32 @@ module.exports = {
 				});
 			}
 		} else {
-			res.json({ status: true, message: 'no hay registro de compra', data: 0 });
+			res.json({
+				status: true,
+				message: 'no hay registro de compra',
+				cantidad: 0
+			});
+		}
+	},
+
+	async getProductoHistorial(req, res) {
+		if (!has(req.params, 'cod_produc')) {
+			res.json({ status: false, message: 'You must specify the cod_product' });
+			return;
+		}
+
+		let { cod_produc } = req.params;
+
+		let ListProductHistorial = await productoModel.getHistorial(cod_produc);
+		if (ListProductHistorial.val() !== null) {
+			let parseintHistorial = Object.values(ListProductHistorial.val());
+			res.json({
+				status: true,
+				message: 'Product list',
+				data: parseintHistorial
+			});
+		} else {
+			res.json({ status: false, message: 'No product list' });
 		}
 	}
 };
