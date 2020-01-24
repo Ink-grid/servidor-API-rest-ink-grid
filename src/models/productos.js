@@ -4,11 +4,7 @@ const database = require('@models/firebase.js');
 
 const Productos = {
 	async getAll() {
-		return await database
-			.ref('NevadoStore/Producto')
-			.orderByChild('registro')
-			.equalTo(false)
-			.once('value');
+		return await database.ref('NevadoStore/Producto').once('value');
 	},
 	async getProductoEntra() {
 		return await database

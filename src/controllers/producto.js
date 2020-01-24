@@ -38,7 +38,6 @@ module.exports = {
 				'RUC_proveedor',
 				'min',
 				'max',
-				'lote',
 				'tipo_producto'
 			])
 		) {
@@ -65,7 +64,6 @@ module.exports = {
 			RUC_proveedor,
 			min,
 			max,
-			lote: lote,
 			tipo_producto
 		} = req.body;
 
@@ -82,8 +80,8 @@ module.exports = {
 			RUC_proveedor: RUC_proveedor,
 			min: min,
 			max: max,
-			lote: lote,
 			stock: 0,
+			cantidad: 1,
 			precio_uni: 0,
 			registro: false,
 			tipo_producto: tipo_producto
@@ -157,7 +155,16 @@ module.exports = {
 			res.json({
 				status: true,
 				message: 'product list',
-				data: parseDataProducto
+				data: parseDataProducto,
+				openOrder: false,
+				total: 0,
+				suma: 0,
+				cart: []
+			});
+		} else {
+			res.json({
+				status: false,
+				message: 'No product list'
 			});
 		}
 	}
