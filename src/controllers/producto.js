@@ -33,9 +33,6 @@ module.exports = {
 				'color',
 				'planta',
 				'talla',
-				'procedencia',
-				'fabricante',
-				'RUC_proveedor',
 				'min',
 				'max',
 				'tipo_producto'
@@ -58,26 +55,30 @@ module.exports = {
 			modelo,
 			color,
 			planta,
+			imagen,
 			talla,
-			procedencia,
-			fabricante,
-			RUC_proveedor,
 			min,
 			max,
 			tipo_producto
 		} = req.body;
 
+		// VERIFICAMOS SI EL PRODUCTO EXISTE
+
+		const getProducto = await productoModel.getProductoByCodigo(cod_producto);
+		if (getProducto.val()) {
+			res.json({ status: false, message: '¡El producto ya existe!' });
+			return;
+		}
+
 		const data = {
 			cod_producto: cod_producto,
 			categoria: categoria,
 			marca: marca,
+			image: imagen ? imagen[0] : "https://images-na.ssl-images-amazon.com/images/I/71FipM80%2BaL._SX500_.jpg",
 			modelo: modelo,
 			color: color,
 			planta: planta,
 			talla: talla,
-			procedencia: procedencia,
-			fabricante: fabricante,
-			RUC_proveedor: RUC_proveedor,
 			min: min,
 			max: max,
 			stock: 0,
@@ -123,6 +124,41 @@ module.exports = {
 				status: true,
 				message: 'no hay registro de compra',
 				cantidad: 0
+			});
+		}
+	},
+	async deleteProducto(req, res) {
+		if (!has(req.params, 'cod_produc')) {
+			res.json({ status: false, message: 'You must specify the cod_product' });
+			return;
+		}
+		let { cod_produc } = req.params;
+		const getProducto = await productoModel.getProductoByCodigo(cod_produc);
+		if (getProducto.val()) {
+			let key = Object.keys(getProducto.val());
+			await productoModel.removeProducto(key);
+			res.json({ status: true, message: 'Se elimino con exito el producto' });
+		}
+	},
+
+	async updateProductos(req, res) {
+		if (!has(req.body, ['cod_producto'])) {
+			res.json({
+				status: false,
+				message: 'You must specify codigo producto'
+			});
+			return;
+		}
+		let { cod_producto } = req.body;
+		const getProducto = await productoModel.getProductoByCodigo(cod_producto);
+		if (getProducto.val()) {
+			const key = Object.keys(getProducto.val());
+			await productoModel.updateProducto(key, req.body);
+			res.json({ status: true, message: 'Se actualizo con exito el producto' });
+		} else {
+			res.json({
+				status: false,
+				message: 'Error al actualizar el producto, por favor intentalo de nuevo'
 			});
 		}
 	},

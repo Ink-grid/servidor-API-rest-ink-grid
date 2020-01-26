@@ -6,6 +6,23 @@ const Productos = {
 	async getAll() {
 		return await database.ref('NevadoStore/Producto').once('value');
 	},
+
+	async getProductoByCodigo(cod) {
+		return await database
+			.ref('NevadoStore/Producto')
+			.orderByChild('cod_producto')
+			.equalTo(cod)
+			.once('value');
+	},
+
+	async updateProducto(key, data) {
+		return await database.ref(`NevadoStore/Producto/${key}`).update(data);
+	},
+
+	async removeProducto(key) {
+		return await database.ref(`NevadoStore/Producto/${key}`).remove();
+	},
+
 	async getProductoEntra() {
 		return await database
 			.ref('NevadoStore/Producto')

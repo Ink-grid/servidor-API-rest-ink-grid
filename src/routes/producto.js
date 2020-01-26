@@ -11,6 +11,8 @@ router.get(
 	'/api/products/historial/:cod_produc',
 	producto.getProductoHistorial
 );
+router.delete('/api/product/:cod_produc', producto.deleteProducto);
+router.patch('/api/products', producto.updateProductos);
 router.get('/api/products/ventas/list', producto.getProductEntradas);
 router.post('/api/products', producto.addProducto);
 // router.get('/api/blogs', blog.getBlogs);

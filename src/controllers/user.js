@@ -19,6 +19,22 @@ module.exports = {
 
 		res.json({ status: true, message: 'Returning user', data });
 	},
+
+	async getRouterUser(req, res) {
+		if (!has(req.params, 'user'))
+			res.json({ status: false, message: 'You must specify the user' });
+
+		let { user } = req.params;
+
+		let routers = await userModel.getRouter(user);
+		if (routers.val()) {
+			res.json({ status: true, message: 'Returning routes', data: Object.values(routers.val()) });
+			return;
+		}
+
+		res.json({ status: false, message: 'Routers no found for users' });
+	},
+
 	async getUsers(req, res) {
 		let data = await userModel.getAll();
 		res.json({ status: true, message: 'Returning users', data });

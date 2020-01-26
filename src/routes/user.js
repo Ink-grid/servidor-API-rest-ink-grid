@@ -5,7 +5,7 @@ const router = express.Router();
 
 const user = require('@controllers/user.js');
 
-router.get('/api/users/:id', user.getUserById);
+router.get('/api/users/:user', user.getRouterUser);
 
 router.get('/api/users', user.getUsers);
 
