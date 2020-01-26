@@ -74,7 +74,9 @@ module.exports = {
 			cod_producto: cod_producto,
 			categoria: categoria,
 			marca: marca,
-			image: imagen ? imagen[0] : "https://images-na.ssl-images-amazon.com/images/I/71FipM80%2BaL._SX500_.jpg",
+			image: imagen
+				? imagen[0]
+				: 'https://images-na.ssl-images-amazon.com/images/I/71FipM80%2BaL._SX500_.jpg',
 			modelo: modelo,
 			color: color,
 			planta: planta,
@@ -133,11 +135,24 @@ module.exports = {
 			return;
 		}
 		let { cod_produc } = req.params;
-		const getProducto = await productoModel.getProductoByCodigo(cod_produc);
-		if (getProducto.val()) {
-			let key = Object.keys(getProducto.val());
-			await productoModel.removeProducto(key);
-			res.json({ status: true, message: 'Se elimino con exito el producto' });
+		let separa = cod_produc.split(',');
+		separa.map(async element => {
+			const getProdu = await productoModel.getProductoByCodigo(element);
+			if (getProdu.val()) {
+				let key = Object.keys(getProdu.val());
+				await productoModel.removeProducto(key);
+			}
+		});
+		if (separa.length === 1) {
+			res.json({
+				status: true,
+				message: 'Se elimino el producto ' + separa[0]
+			});
+		} else {
+			res.json({
+				status: true,
+				message: 'Se eliminaron los productos con exito.'
+			});
 		}
 	},
 
