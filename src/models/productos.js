@@ -1,5 +1,4 @@
 /** @format */
-
 const database = require('@models/firebase.js');
 
 const Productos = {

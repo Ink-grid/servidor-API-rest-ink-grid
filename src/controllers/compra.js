@@ -30,10 +30,10 @@ module.exports = {
 		const data = {
 			fecha: fecha,
 			descripcion: descripcion,
-			valor_uni: parseInt(valor_uni),
+			valor_uni: parseFloat(valor_uni),
 			entradas: {
 				cantidad: parseInt(cantidad),
-				valor: valor_uni * cantidad
+				valor: parseFloat(valor_uni * cantidad)
 			},
 			operacion: 'entrada',
 			saldo: {
@@ -119,10 +119,21 @@ module.exports = {
 			}
 		};
 
-		await compraModel.addCompras(cod_producto, datanew);
-		res.json({
-			status: true,
-			message: 'Compras Added'
-		});
+		const idproducto = await compraModel.getproductbyID(cod_producto);
+
+		if (idproducto.val() !== null) {
+			const key = Object.keys(idproducto.val());
+			const dataUpdate = {
+				stock: cantidad,
+				registro: true,
+				precio_uni: parseInt(valor_uni)
+			};
+			await compraModel.updateProducto(key, dataUpdate);
+			await compraModel.addCompras(cod_producto, datanew);
+			res.json({
+				status: true,
+				message: 'Compras Added'
+			});
+		}
 	}
 };
