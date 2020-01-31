@@ -15,7 +15,9 @@ module.exports = {
 			res.json({
 				status: true,
 				message: 'Returning producto',
-				data: parseDataProduct
+				data: parseDataProduct,
+				cart: [],
+				total: 0
 			});
 			return;
 		}

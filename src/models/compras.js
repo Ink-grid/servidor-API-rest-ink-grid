@@ -13,6 +13,10 @@ const compras = {
 			.equalTo(codigo)
 			.once('value');
 	},
+
+	async saveCompras(data) {
+		return await database.ref(`NevadoStore/Compras`).push(data);
+	},
 	async updateProducto(id, data) {
 		return await database.ref(`NevadoStore/Producto/${id}`).update(data);
 	},

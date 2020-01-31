@@ -115,7 +115,7 @@ module.exports = {
 			operacion: 'product_list',
 			saldo: {
 				cantidad: parseInt(cantidad),
-				valor: valor_uni * cantidad
+				valor: parseFloat(valor_uni * cantidad)
 			}
 		};
 
@@ -126,7 +126,7 @@ module.exports = {
 			const dataUpdate = {
 				stock: cantidad,
 				registro: true,
-				precio_uni: parseInt(valor_uni)
+				precio_uni: parseFloat(valor_uni)
 			};
 			await compraModel.updateProducto(key, dataUpdate);
 			await compraModel.addCompras(cod_producto, datanew);
