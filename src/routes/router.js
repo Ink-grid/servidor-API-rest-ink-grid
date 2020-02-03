@@ -11,5 +11,6 @@ router.use(require('@routes/pageinkgrid.js'));
 router.use(require('@routes/compra'));
 router.use(require('@routes/venta'));
 router.use(require('@routes/user'));
+router.use(require('@routes/pedidos'));
 
 module.exports = router;

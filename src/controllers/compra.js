@@ -130,6 +130,7 @@ module.exports = {
 			};
 			await compraModel.updateProducto(key, dataUpdate);
 			await compraModel.addCompras(cod_producto, datanew);
+			await compraModel.saveCompras(req.body);
 			res.json({
 				status: true,
 				message: 'Compras Added'
